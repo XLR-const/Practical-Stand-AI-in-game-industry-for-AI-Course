@@ -1,0 +1,13 @@
+# Окружение Python
+venv/
+.venv/
+
+# Папки сборки PyInstaller
+build/
+dist/
+*.spec
+
+# Временные файлы кэша Python и Pygame
+__pycache__/
+*/__pycache__/
+boids_debug_log.txt
