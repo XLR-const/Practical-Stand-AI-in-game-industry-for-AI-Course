@@ -106,7 +106,7 @@ class SimulationApp:
             # 6. Выводим текст с текущими параметрами состояния ИИ
             info_text = self.current_mode.get_info_text()
             info_surf = self.font_main.render(info_text, True, COLOR_TEXT)
-            self.screen.blit(info_surf, (20, 95))
+            self.screen.blit(info_surf, (25, 100))
 
             # 7. Выводим подсказку по кнопкам управления в самом низу экрана
             help_text = "WASD / Стрелки — движение | Клавиши 1, 2, 3 — смена режимов ИИ | ESC — выход"

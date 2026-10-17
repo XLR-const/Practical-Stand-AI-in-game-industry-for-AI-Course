@@ -25,10 +25,8 @@ class Boid:
         self.pos += self.velocity * dt
         self.acceleration *= 0
 
-        # Физика столкновения стаи со стенами
         self.pos = handle_wall_collision(old_pos, self.pos, NPC_SIZE // 2)
 
-        # Ограничения экрана
         if self.pos.x < 0: self.pos.x = SCREEN_WIDTH
         elif self.pos.x > SCREEN_WIDTH: self.pos.x = 0
         if self.pos.y < 80: self.pos.y = SCREEN_HEIGHT
@@ -40,7 +38,6 @@ class FlockingMode:
         self.boids = []
         random.seed(42)
         for _ in range(FLOCK_COUNT):
-            # Спавним стаю вне зон стен, чтобы они не застревали на старте
             x = random.randint(50, 400)
             y = random.randint(100, 700)
             self.boids.append(Boid(x, y))
@@ -50,19 +47,16 @@ class FlockingMode:
             sep = self.separation(boid) * FLOCK_WEIGHT_SEPARATION
             ali = self.alignment(boid) * FLOCK_WEIGHT_ALIGNMENT
             coh = self.cohesion(boid) * FLOCK_WEIGHT_COHESION
-            avoid = self.avoid_walls(boid) * 3.0 # Сила избегания стен
+            avoid = self.avoid_walls(boid) * 3.0
 
             boid.apply_force(sep + ali + coh + avoid)
             boid.update(dt)
 
     def avoid_walls(self, boid):
-        """Интеллектуальная сила, заставляющая птиц заранее менять траекторию перед стенами."""
         steer = pygame.Vector2(0, 0)
         for wall in [WALL_VERTICAL, WALL_HORIZONTAL]:
-            # Проверяем "виртуальный" буфер вокруг стены
             inflated = wall.inflate(60, 60)
             if inflated.collidepoint(boid.pos.x, boid.pos.y):
-                # Сила толкает boid наружу от центра стены
                 center = pygame.Vector2(wall.centerx, wall.centery)
                 diff = boid.pos - center
                 if diff.length_squared() > 0:
@@ -76,7 +70,7 @@ class FlockingMode:
             draw_triangle(screen, boid.pos, boid.velocity, NPC_SIZE, COLOR_NPC)
 
     def get_info_text(self):
-        return f"Flocking | 30 NPC огибают вертикальную и горизонтальную стены"
+        return f"Алгоритм стаи | Количество противников: 30 | Здоровье игрока: {int(self.player.health)} | Агенты огибают вертикальную и горизонтальную стены"
 
     def separation(self, boid):
         steer = pygame.Vector2(0, 0)

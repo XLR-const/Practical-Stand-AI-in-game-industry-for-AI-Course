@@ -6,10 +6,12 @@ class Player:
         self.pos = pygame.Vector2(x, y)
         self.radius = PLAYER_RADIUS
         self.speed = PLAYER_SPEED
+        self.health = 100.0  # Здоровье игрока
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
         move = pygame.Vector2(0, 0)
+        
         if keys[pygame.K_w] or keys[pygame.K_UP]:    move.y -= 1
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:  move.y += 1
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:  move.x -= 1
@@ -18,13 +20,16 @@ class Player:
         if move.length_squared() > 0:
             move = move.normalize()
             new_pos = self.pos + move * self.speed * dt
-            # Физика столкновения игрока со стенами:
             from config import handle_wall_collision
             self.pos = handle_wall_collision(self.pos, new_pos, self.radius)
 
+        # Ограничения экрана
         self.pos.x = max(self.radius, min(SCREEN_WIDTH - self.radius, self.pos.x))
         self.pos.y = max(80 + self.radius, min(SCREEN_HEIGHT - self.radius, self.pos.y))
 
+        # РЕСПАВН БЕЗ СМЕРТИ: если ХП упало до нуля или ниже, мгновенно делаем 100
+        if self.health <= 0:
+            self.health = 100.0
 
     def draw(self, screen, color):
         pygame.draw.circle(screen, color, (int(self.pos.x), int(self.pos.y)), self.radius)
